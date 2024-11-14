@@ -4,20 +4,36 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-                // Example: sh 'pip install -r requirements.txt'
+                sh 'pip install -r requirements.txt' // Uncommented for actual build step
             }
         }
         stage('Test') {
             steps {
                 echo 'Testing...'
-                // Example: sh 'pytest tests/'
+                sh 'pytest tests/' // Uncommented for actual test step
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                echo 'Running SonarQube Analysis...'
+                withSonarQubeEnv('SonarQube') {  // Ensure 'SonarQube' matches the server name in Jenkins
+                    sh 'sonar-scanner' // Run SonarQube scanner
+                }
             }
         }
         stage('Deploy') {
             steps {
                 echo 'Deploying...'
-                // Example: Deploy steps if required
+                // Placeholder for deployment steps
             }
+        }
+    }
+    post {
+        always {
+            echo 'Pipeline completed.'
+        }
+        failure {
+            echo 'Pipeline failed. Check logs for details.'
         }
     }
 }
