@@ -11,7 +11,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 echo 'Running SonarQube Analysis...'
-                withSonarQubeEnv('SonarQube') {  // Make sure 'SonarQube' matches the server name in Jenkins
+                withSonarQubeEnv('SonarQube') {  // Make sure this matches exactly
                     sh 'sonar-scanner'  // Run SonarQube scanner
                 }
             }
