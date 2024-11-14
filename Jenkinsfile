@@ -4,24 +4,31 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-                sh 'pip install -r requirements.txt' // Uncommented for actual build step
+                sh 'python3 --version' // To verify the Python version
+                sh 'pip3 install -r requirements.txt' // Use pip3 explicitly for the requirements
             }
         }
         stage('Test') {
             steps {
                 echo 'Testing...'
-                sh 'pytest tests/' // Uncommented for actual test step
+                sh 'python3 -m pytest tests/' // Use python3 to invoke pytest
             }
         }
         stage('SonarQube Analysis') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
             steps {
                 echo 'Running SonarQube Analysis...'
-                withSonarQubeEnv('SonarQube') {  // Ensure 'SonarQube' matches the server name in Jenkins
+                withSonarQubeEnv('SonarQube') { // Ensure 'SonarQube' matches the server name configured in Jenkins
                     sh 'sonar-scanner' // Run SonarQube scanner
                 }
             }
         }
         stage('Deploy') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
             steps {
                 echo 'Deploying...'
                 // Placeholder for deployment steps
