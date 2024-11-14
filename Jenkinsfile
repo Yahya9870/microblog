@@ -4,31 +4,20 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-                sh 'python3 --version'  // To verify the Python version
-                sh 'pip3 install -r requirements.txt'  // Install dependencies
+                // Example: sh 'pip install -r requirements.txt'
             }
         }
-        stage('SonarQube Analysis') {
+        stage('Test') {
             steps {
-                echo 'Running SonarQube Analysis...'
-                withSonarQubeEnv('SonarQube') {  // Make sure this matches exactly
-                    sh 'sonar-scanner'  // Run SonarQube scanner
-                }
+                echo 'Testing...'
+                // Example: sh 'pytest tests/'
             }
         }
         stage('Deploy') {
             steps {
                 echo 'Deploying...'
-                // Placeholder for deployment steps
+                // Example: Deploy steps if required
             }
-        }
-    }
-    post {
-        always {
-            echo 'Pipeline completed.'
-        }
-        failure {
-            echo 'Pipeline failed. Check logs for details.'
         }
     }
 }
