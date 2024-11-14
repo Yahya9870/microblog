@@ -4,14 +4,14 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-                sh 'python3 --version' // To verify the Python version
-                sh 'pip3 install -r requirements.txt' // Use pip3 explicitly for the requirements
+                sh 'python3 --version'  // To verify the Python version
+                sh 'python3 -m pip install --user -r requirements.txt'  // Use python3 -m pip for a consistent environment
             }
         }
         stage('Test') {
             steps {
                 echo 'Testing...'
-                sh 'python3 -m pytest tests/' // Use python3 to invoke pytest
+                sh 'python3 -m pytest tests/'  // Use python3 to invoke pytest
             }
         }
         stage('SonarQube Analysis') {
@@ -20,8 +20,8 @@ pipeline {
             }
             steps {
                 echo 'Running SonarQube Analysis...'
-                withSonarQubeEnv('SonarQube') { // Ensure 'SonarQube' matches the server name configured in Jenkins
-                    sh 'sonar-scanner' // Run SonarQube scanner
+                withSonarQubeEnv('SonarQube') {  // Ensure 'SonarQube' matches the server name configured in Jenkins
+                    sh 'sonar-scanner'  // Run SonarQube scanner
                 }
             }
         }
