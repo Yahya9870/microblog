@@ -4,18 +4,32 @@ from flask_babel import _
 
 
 def translate(text, source_language, dest_language):
+    # Define allowed language codes (replace with the actual valid codes)
+    allowed_languages = {'en', 'es', 'fr', 'de', 'zh', 'ar'}  # Example
+
+    # Validate input languages
+    if source_language not in allowed_languages or dest_language not in allowed_languages:
+        return _('Error: invalid source or destination language.')
+
     if 'MS_TRANSLATOR_KEY' not in current_app.config or \
             not current_app.config['MS_TRANSLATOR_KEY']:
         return _('Error: the translation service is not configured.')
+
     auth = {
         'Ocp-Apim-Subscription-Key': current_app.config['MS_TRANSLATOR_KEY'],
         'Ocp-Apim-Subscription-Region': 'westus'
     }
-    r = requests.post(
-        'https://api.cognitive.microsofttranslator.com'
-        '/translate?api-version=3.0&from={}&to={}'.format(
-            source_language, dest_language), headers=auth, json=[
-                {'Text': text}])
+
+    # Use params for query construction
+    url = 'https://api.cognitive.microsofttranslator.com/translate'
+    params = {
+        'api-version': '3.0',
+        'from': source_language,
+        'to': dest_language
+    }
+
+    r = requests.post(url, params=params, headers=auth, json=[{'Text': text}])
     if r.status_code != 200:
         return _('Error: the translation service failed.')
+
     return r.json()[0]['translations'][0]['text']
