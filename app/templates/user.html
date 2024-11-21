@@ -1,16 +1,23 @@
 {% extends "base.html" %}
-{% from "macros.html" import render_user_info %}
+{% from "macros.html" import render_profile %}
 
 {% block content %}
     <table class="table table-hover">
         <thead>
             <tr>
-                <th scope="col">Avatar</th>
-                <th scope="col">User Information</th>
+                <th>Avatar</th>
+                <th>User Information</th>
             </tr>
         </thead>
         <tbody>
-            {{ render_user_info(user, current_user) }}
+            <tr>
+                <td width="256px">
+                    <img src="{{ user.avatar(256) }}" alt="User Avatar">
+                </td>
+                <td>
+                    {{ render_profile(user) }}
+                </td>
+            </tr>
         </tbody>
     </table>
     {% for post in posts %}
