@@ -1,5 +1,5 @@
 from flask import render_template, redirect, url_for, flash, request
-from urllib.parse import urlsplit
+from urllib.parse import urlparse, urljoin
 from flask_login import login_user, logout_user, current_user
 from flask_babel import _
 import sqlalchemy as sa
@@ -9,6 +9,13 @@ from app.auth.forms import LoginForm, RegistrationForm, \
     ResetPasswordRequestForm, ResetPasswordForm
 from app.models import User
 from app.auth.email import send_password_reset_email
+
+
+# Helper function to validate safe URLs
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
 
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -24,7 +31,7 @@ def login():
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
-        if not next_page or urlsplit(next_page).netloc != '':
+        if not next_page or not is_safe_url(next_page):
             next_page = url_for('main.index')
         return redirect(next_page)
     return render_template('auth/login.html', title=_('Sign In'), form=form)
