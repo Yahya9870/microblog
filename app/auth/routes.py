@@ -30,11 +30,17 @@ def login():
             flash(_('Invalid username or password'))
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
-        # Validate `next` parameter to prevent open redirects
+
+        # Get the 'next' parameter from the query string
         next_page = request.args.get('next')
+
+        # Validate the 'next' parameter for safety
         if not next_page or not is_safe_url(next_page):
-            next_page = url_for('main.index')
+            next_page = url_for('main.index')  # Default to the home page if invalid
+
+        # Perform the redirect
         return redirect(next_page)
+
     return render_template('auth/login.html', title=_('Sign In'), form=form)
 
 
