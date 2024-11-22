@@ -1,6 +1,0 @@
-{% macro form(action_url, button_value, button_class) %}
-<form action="{{ action_url }}" method="post">
-    {{ form.hidden_tag() }}
-    {{ form.submit(value=button_value, class_=button_class) }}
-</form>
-{% endmacro %}
