@@ -1,13 +1,13 @@
 from flask import render_template, redirect, url_for, flash, request
 from urllib.parse import urlparse, urljoin
-from flask_login import login_user, logout_user, current_user
+from flask_login import login_user, logout_user, current_user, login_required
 from flask_babel import _
 import sqlalchemy as sa
 from app import db
 from app.auth import bp
 from app.auth.forms import LoginForm, RegistrationForm, \
-    ResetPasswordRequestForm, ResetPasswordForm
-from app.models import User
+    ResetPasswordRequestForm, ResetPasswordForm, ReviewForm
+from app.models import User, Review
 from app.auth.email import send_password_reset_email
 
 
@@ -97,3 +97,25 @@ def reset_password(token):
         flash(_('Your password has been reset.'))
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password.html', form=form)
+
+
+# New Routes for Posting and Viewing Reviews
+@bp.route('/post_review', methods=['GET', 'POST'])
+@login_required
+def post_review():
+    form = ReviewForm()
+    if form.validate_on_submit():
+        review = Review(body=form.review.data, user_id=current_user.id)
+        db.session.add(review)
+        db.session.commit()
+        flash(_('Your review has been posted!'))
+        return redirect(url_for('auth.view_reviews'))
+    return render_template('auth/post_review.html', title=_('Post Review'), form=form)
+
+
+@bp.route('/reviews')
+@login_required
+def view_reviews():
+    reviews = db.session.scalars(
+        sa.select(Review).order_by(Review.timestamp.desc())).all()
+    return render_template('auth/reviews.html', title=_('Reviews'), reviews=reviews)

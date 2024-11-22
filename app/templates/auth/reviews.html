@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Reviews</h1>
+    {% for review in reviews %}
+        <div class="review">
+            <p>{{ review.body }}</p>
+            <small>By {{ review.author.username }} on {{ review.timestamp }}</small>
+        </div>
+    {% else %}
+        <p>No reviews yet.</p>
+    {% endfor %}
+{% endblock %}

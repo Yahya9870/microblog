@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Post a Review</h1>
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.review.label }}<br>
+            {{ form.review(size=32) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}
